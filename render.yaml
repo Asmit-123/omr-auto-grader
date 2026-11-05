@@ -1,0 +1,7 @@
+# One-click deploy on Render.com: New + > Blueprint > pick this repo.
+services:
+  - type: web
+    name: omr-auto-grader
+    runtime: docker
+    plan: free
+    healthCheckPath: /_stcore/health

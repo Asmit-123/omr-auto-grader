@@ -1,0 +1,10 @@
+[server]
+headless = true
+maxUploadSize = 25          # MB per file (phone photos are 3-10 MB)
+enableXsrfProtection = true
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+primaryColor = "#2563eb"
