@@ -6,6 +6,8 @@ feedback in seconds. A web app built with Python, OpenCV and Streamlit. No speci
 This is the finished product of the project in the reports: the prototype (`Main.py` / `utils.py`) was a
 fixed 5 × 5 script with a hard-coded key; this version is a configurable, tested, deployable web app.
 
+**Live app:** https://omr-auto-grader.streamlit.app/
+
 ## What it does
 
 | Feature | Status |
@@ -57,6 +59,9 @@ Health check endpoint: `/_stcore/health`. Upload limit is 25 MB per file (`.stre
 ## Using it well
 
 * Use **Print a sheet** to make sheets this grader is designed for. Fill bubbles fully.
+* **On a phone, use "Upload a file"**, not the camera box: it opens your phone's own camera app on the back camera.
+  The in-page camera box cannot be forced to the back camera (a limit of the Streamlit web app; the planned Android
+  app will handle this properly).
 * Keep the whole sheet in frame, flat, with even light. Heavy shadow across the grid is the main cause of misreads.
 * Your own sheet design also works if it has one bordered answer grid with bubbles in a regular rows x columns
   layout (like the hand-drawn project sheets), with an optional bordered box below it for the grade.

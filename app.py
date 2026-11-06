@@ -8,6 +8,7 @@ import cv2
 import pandas as pd
 import streamlit as st
 
+from omr_grader import __version__
 from omr_grader.engine import (GRADE_BANDS, MAX_RELIABLE_QUESTIONS, OMRConfig, encode_png, parse_answer_key)
 from omr_grader.service import (LETTERS, batch_zip, grade_bytes, question_table, sample_files, summary_row)
 from omr_grader.sheet import make_sheet, sheet_to_pdf_bytes
@@ -93,7 +94,7 @@ def show_result(res, label: str):
         st.error(res.error)
         if res.stages:
             with st.expander("What the grader saw"):
-                st.image(cv2.cvtColor(res.stages["1 Original"], cv2.COLOR_BGR2RGB), use_container_width=True)
+                st.image(cv2.cvtColor(res.stages["1 Original"], cv2.COLOR_BGR2RGB), width="stretch")
         return
     c1, c2, c3, c4, c5 = st.columns(5)
     c1.metric("Marks", f"{res.marks:g} / {res.total_marks:g}")
@@ -106,13 +107,13 @@ def show_result(res, label: str):
 
     left, right = st.columns([3, 2])
     with left:
-        st.image(cv2.cvtColor(res.annotated, cv2.COLOR_BGR2RGB), caption="Graded sheet", use_container_width=True)
+        st.image(cv2.cvtColor(res.annotated, cv2.COLOR_BGR2RGB), caption="Graded sheet", width="stretch")
         show_legend()
     with right:
         df = question_table(res)
         st.dataframe(
             df.style.apply(lambda r: [""] * len(r) if r["Result"] == "Correct" else ["background-color: rgba(230,0,0,0.12)"] * len(r), axis=1),
-            hide_index=True, use_container_width=True, height=min(60 + 35 * len(df), 520),
+            hide_index=True, width="stretch", height=min(60 + 35 * len(df), 520),
         )
         st.download_button("⬇ Graded image (PNG)", encode_png(res.annotated), f"{label}_graded.png", "image/png")
         st.download_button("⬇ Question table (CSV)", df.to_csv(index=False), f"{label}_questions.csv", "text/csv")
@@ -120,7 +121,7 @@ def show_result(res, label: str):
         names = list(res.stages)
         cols = st.columns(4)
         for i, n in enumerate(names):
-            cols[i % 4].image(cv2.cvtColor(res.stages[n], cv2.COLOR_BGR2RGB), caption=n, use_container_width=True)
+            cols[i % 4].image(cv2.cvtColor(res.stages[n], cv2.COLOR_BGR2RGB), caption=n, width="stretch")
 
 
 # --------------------------------------------------------------------------- single sheet
@@ -173,7 +174,7 @@ with tab_batch:
             m2.metric("Graded", len(graded))
             m3.metric("Average %", f"{graded['Percentage'].mean():.1f}" if len(graded) else "-")
             m4.metric("Need review", int(df["Needs review"].sum()))
-            st.dataframe(df, hide_index=True, use_container_width=True)
+            st.dataframe(df, hide_index=True, width="stretch")
             d1, d2 = st.columns(2)
             d1.download_button("⬇ Results (CSV)", df.to_csv(index=False), "omr_results.csv", "text/csv")
             d2.download_button("⬇ Results + graded images (ZIP)", batch_zip(results), "omr_graded.zip", "application/zip")
@@ -219,3 +220,6 @@ with tab_how:
 Fill bubbles fully. A bubble with two marks is flagged and scored as wrong (minus the negative mark, if enabled).
         """
     )
+
+st.divider()
+st.caption(f"OMR Auto-Grader v{__version__}")
